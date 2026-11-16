@@ -12,7 +12,7 @@ class SubmissionSchema(BaseModel):
     title: str
     url: HttpUrl
 
-    @field_validator("name", "title")
+    @field_validator("name", "reg_no", "title")
     @classmethod
     def not_empty(cls, v: str):
         if not v or not v.strip():
