@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>CUI Assignment Portal (Static Demo)</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; }
+        input { width: 100%; padding: 8px; margin: 6px 0 15px; box-sizing: border-box; }
+        button { padding: 10px 20px; background: #0056b3; color: white; border: none; cursor: pointer; }
+        .error { color: red; margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+    </style>
+</head>
+<body>
+    <h2>COMSATS Assignment Submission Portal (Live Demo)</h2>
+    <div id="err" class="error"></div>
+    <input id="name" placeholder="Student Name *">
+    <input id="reg" placeholder="Registration Number *">
+    <input id="title" placeholder="Assignment Title *">
+    <input id="url" placeholder="Submission URL (https://...) *">
+    <button onclick="addSub()">Submit Assignment</button>
+    <table id="tbl">
+        <tr><th>Name</th><th>Reg No</th><th>Title</th><th>URL</th></tr>
+    </table>
+    <script>
+        function addSub() {
+            const name = document.getElementById('name').value.trim();
+            const reg = document.getElementById('reg').value.trim();
+            const title = document.getElementById('title').value.trim();
+            const url = document.getElementById('url').value.trim();
+            const err = document.getElementById('err');
+            if (!name || !reg || !title || !url.startsWith('http')) {
+                err.innerText = "Validation Error: All fields and a valid http/https URL are required.";
+                return;
+            }
+            err.innerText = "";
+            const row = document.getElementById('tbl').insertRow();
+            row.innerHTML = `<td>${name}</td><td>${reg}</td><td>${title}</td><td><a href="${url}">${url}</a></td>`;
+        }
+    </script>
+</body>
+</html>
