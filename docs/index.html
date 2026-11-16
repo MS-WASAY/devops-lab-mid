@@ -1,42 +1,157 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>CUI Assignment Portal (Static Demo)</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; }
-        input { width: 100%; padding: 8px; margin: 6px 0 15px; box-sizing: border-box; }
-        button { padding: 10px 20px; background: #0056b3; color: white; border: none; cursor: pointer; }
-        .error { color: red; margin-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COMSATS Assignment Submission Portal</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: #f4f6f9; margin: 0; padding: 0; color: #1e293b; }
+    header { background: #17365d; color: #fff; text-align: center; padding: 18px; font-size: 22px; font-weight: 700; }
+    .container { max-width: 720px; margin: 35px auto; background: #fff; padding: 30px 35px; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    h2 { text-align: center; margin-top: 0; margin-bottom: 22px; color: #0f172a; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; }
+    input { width: 100%; padding: 11px 13px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+    input:focus { outline: none; border-color: #17365d; box-shadow: 0 0 0 2px rgba(23,54,93,0.15); }
+    button { background: #0f52ba; color: #fff; border: none; padding: 11px 22px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 5px; }
+    button:hover { background: #0b3d8c; }
+    .alert { padding: 12px 15px; border-radius: 6px; margin-top: 16px; font-size: 14px; font-weight: 500; display: none; }
+    .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+    .alert-success { background: #dcfce7; color: #166534; border: 1px solid #4ade80; }
+    table { width: 100%; border-collapse: collapse; margin-top: 25px; }
+    th, td { border: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; font-size: 14px; }
+    th { background: #f8fafc; font-weight: 700; text-align: center; }
+    td a { color: #0f52ba; word-break: break-all; }
+  </style>
 </head>
 <body>
-    <h2>COMSATS Assignment Submission Portal (Live Demo)</h2>
-    <div id="err" class="error"></div>
-    <input id="name" placeholder="Student Name *">
-    <input id="reg" placeholder="Registration Number *">
-    <input id="title" placeholder="Assignment Title *">
-    <input id="url" placeholder="Submission URL (https://...) *">
-    <button onclick="addSub()">Submit Assignment</button>
-    <table id="tbl">
-        <tr><th>Name</th><th>Reg No</th><th>Title</th><th>URL</th></tr>
+  <header>🎓 Student Assignment Portal</header>
+  <div class="container">
+    <h2>COMSATS Assignment Submission Portal</h2>
+
+    <form id="submissionForm" novalidate>
+      <div class="form-group">
+        <label for="name">Student Name</label>
+        <input type="text" id="name" placeholder="Enter full name (e.g., M Shifa Wasay)" />
+      </div>
+
+      <div class="form-group">
+        <label for="regNo">Registration Number</label>
+        <input type="text" id="regNo" placeholder="e.g., SP23-BCS-043" />
+      </div>
+
+      <div class="form-group">
+        <label for="title">Assignment Title</label>
+        <input type="text" id="title" placeholder="e.g., DevOps Lab Mid" />
+      </div>
+
+      <div class="form-group">
+        <label for="url">Submission URL</label>
+        <input type="url" id="url" placeholder="https://github.com/username/repo" />
+      </div>
+
+      <button type="submit">Submit Assignment</button>
+    </form>
+
+    <div id="alertBox" class="alert"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Reg No</th>
+          <th>Title</th>
+          <th>URL</th>
+        </tr>
+      </thead>
+      <tbody id="submissionsBody"></tbody>
     </table>
-    <script>
-        function addSub() {
-            const name = document.getElementById('name').value.trim();
-            const reg = document.getElementById('reg').value.trim();
-            const title = document.getElementById('title').value.trim();
-            const url = document.getElementById('url').value.trim();
-            const err = document.getElementById('err');
-            if (!name || !reg || !title || !url.startsWith('http')) {
-                err.innerText = "Validation Error: All fields and a valid http/https URL are required.";
-                return;
-            }
-            err.innerText = "";
-            const row = document.getElementById('tbl').insertRow();
-            row.innerHTML = `<td>${name}</td><td>${reg}</td><td>${title}</td><td><a href="${url}">${url}</a></td>`;
-        }
-    </script>
+  </div>
+
+  <script>
+    const form = document.getElementById('submissionForm');
+    const alertBox = document.getElementById('alertBox');
+    const submissionsBody = document.getElementById('submissionsBody');
+
+    function showAlert(message, type) {
+      alertBox.textContent = message;
+      alertBox.className = 'alert ' + (type === 'error' ? 'alert-error' : 'alert-success');
+      alertBox.style.display = 'block';
+    }
+
+    function isValidUrl(value) {
+      try {
+        const parsed = new URL(value);
+        return (parsed.protocol === 'http:' || parsed.protocol === 'https:') && parsed.hostname.includes('.');
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function renderSubmissions() {
+      const list = JSON.parse(localStorage.getItem('submissions') || '[]');
+      submissionsBody.innerHTML = list.map(item => `
+        <tr>
+          <td>${item.name}</td>
+          <td>${item.regNo}</td>
+          <td>${item.title}</td>
+          <td><a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.url}</a></td>
+        </tr>
+      `).join('');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const regNo = document.getElementById('regNo').value.trim().toUpperCase();
+      const title = document.getElementById('title').value.trim();
+      const url = document.getElementById('url').value.trim();
+
+      // 1. Student Name Missing Check
+      if (!name) {
+        showAlert('Missing required field: Student Name is required.', 'error');
+        return;
+      }
+
+      // 2. Registration Number Missing & Strict Format Check (e.g., SP23-BCS-043)
+      if (!regNo) {
+        showAlert('Missing required field: Registration Number is required.', 'error');
+        return;
+      }
+      const regPattern = /^(SP|FA)\d{2}-[A-Z]{2,4}-\d{3}$/;
+      if (!regPattern.test(regNo)) {
+        showAlert('Invalid Registration Number format. Expected format: SP23-BCS-043', 'error');
+        return;
+      }
+
+      // 3. Assignment Title Missing Check
+      if (!title) {
+        showAlert('Missing required field: Assignment Title is required.', 'error');
+        return;
+      }
+
+      // 4. Submission URL Missing & Valid HTTP/HTTPS Format Check
+      if (!url) {
+        showAlert('Missing required field: Submission URL is required.', 'error');
+        return;
+      }
+      if (!isValidUrl(url)) {
+        showAlert('Invalid Submission URL. Must start with http:// or https:// and include a valid domain.', 'error');
+        return;
+      }
+
+      // Save locally for GitHub Pages / static demo
+      const list = JSON.parse(localStorage.getItem('submissions') || '[]');
+      list.push({ name, regNo, title, url });
+      localStorage.setItem('submissions', JSON.stringify(list));
+      renderSubmissions();
+      showAlert('Assignment Submitted Successfully!', 'success');
+      form.reset();
+    });
+
+    renderSubmissions();
+  </script>
 </body>
 </html>
