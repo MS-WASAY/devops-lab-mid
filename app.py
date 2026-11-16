@@ -8,7 +8,7 @@ submissions: List[dict] = []
 
 class SubmissionSchema(BaseModel):
     name: str
-    
+    reg_no: str
     title: str
     url: HttpUrl
 
