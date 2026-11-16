@@ -2,3 +2,5 @@
 __pycache__/
 results.xml
 test-report.json
+
+cloudflared.exe
