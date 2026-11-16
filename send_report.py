@@ -50,7 +50,16 @@ def send_to_localhost(report):
     webhook_url = os.getenv("LOCAL_RECEIVER_URL")
     if webhook_url:
         try:
-            resp = requests.post(f"{webhook_url.rstrip('/')}/report", json=report, timeout=15)
+            headers = {
+                "Content-Type": "application/json",
+                "X-Pinggy-No-Screen": "true"
+            }
+            resp = requests.post(
+                f"{webhook_url.rstrip('/')}/report",
+                json=report,
+                headers=headers,
+                timeout=15
+            )
             print("Localhost receiver response:", resp.status_code)
         except Exception as e:
             print("Failed to send to localhost:", e)
