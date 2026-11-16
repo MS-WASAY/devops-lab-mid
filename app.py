@@ -8,11 +8,11 @@ submissions: List[dict] = []
 
 class SubmissionSchema(BaseModel):
     name: str
-    reg_no: str = "DEFAULT"
+    reg_no: str
     title: str
     url: HttpUrl
 
-    @field_validator("name", "reg_no", "title")
+    @field_validator("name", "title")
     @classmethod
     def not_empty(cls, v: str):
         if not v or not v.strip():
